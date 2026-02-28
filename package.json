@@ -1,0 +1,31 @@
+{
+  "name": "repo-map",
+  "version": "1.0.0",
+  "description": "Understand any codebase in 5 minutes. Auto-generates onboarding guides.",
+  "type": "module",
+  "bin": {
+    "repo-map": "./bin/map.js"
+  },
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node bin/map.js"
+  },
+  "keywords": [
+    "codebase",
+    "onboarding",
+    "developer-tools",
+    "code-analysis",
+    "documentation",
+    "cli",
+    "devtools"
+  ],
+  "author": "Nicholas Ashkar",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^12.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

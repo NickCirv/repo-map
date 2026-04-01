@@ -1,3 +1,5 @@
+![Banner](banner.svg)
+
 # repo-map
 
 **Understand any codebase in 5 minutes.**

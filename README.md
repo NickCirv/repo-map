@@ -1,14 +1,21 @@
-![Banner](banner.svg)
+![repo-map — understand any codebase in 5 minutes with static analysis and git hotspot detection](assets/banner.png)
 
-# repo-map
+<div align="center">
 
-**Understand any codebase in 5 minutes.**
+**Drop into any git repo and get a ranked, structured map of the entire codebase in under a minute.**
 
-[![npm](https://img.shields.io/badge/npx-repo--map-3B82F6?style=flat-square)](https://www.npmjs.com/package/repo-map)
-[![zero-config](https://img.shields.io/badge/zero--config-yes-22c55e?style=flat-square)](#)
-[![no API keys](https://img.shields.io/badge/no%20API%20keys-required-22c55e?style=flat-square)](#)
-[![works offline](https://img.shields.io/badge/works-offline-22c55e?style=flat-square)](#)
-[![license](https://img.shields.io/badge/license-MIT-gray?style=flat-square)](LICENSE)
+![license](https://img.shields.io/badge/license-MIT-blue?labelColor=0B0A09)
+![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?labelColor=0B0A09)
+![no API keys](https://img.shields.io/badge/API%20keys-none%20required-8B92F6?labelColor=0B0A09)
+![works offline](https://img.shields.io/badge/works-offline-8B92F6?labelColor=0B0A09)
+
+</div>
+
+---
+
+You join a new project. There are 500 files. Nobody wrote docs. Where do you even start?
+
+`repo-map` runs pure static analysis + git log parsing — no network, no account, no AI service — and produces a ranked guide: the key files to read first, the hottest change zones, the complexity warnings, and a straight-line start-here path.
 
 ```
   REPO-MAP  v1.0.0
@@ -22,128 +29,104 @@
   1. src/index.ts            Entry point  245 LOC │ 8 imports
   2. src/api/router.ts                    189 LOC │ 12 imports
   3. src/db/schema.ts                     312 LOC │ 5 imports
-  4. src/components/App.tsx               201 LOC │ 14 imports
-  5. src/config.ts                        98 LOC  │ 3 imports
 
   ── Hotspots (most volatile) ─────────────────────────
   ⚡ src/api/router.ts         38 changes
   ⚡ src/components/Form.tsx   29 changes
-  ⚡ src/db/migrations/        21 changes
 
   ── Complexity Warnings ──────────────────────────────
   ⚠  src/legacy/parser.js     847 lines (consider splitting)
-  ⚠  src/utils/helpers.ts     612 lines
 
   ── Start Here Path ──────────────────────────────────
-  1 → README.md
-  2 → src/index.ts
-  3 → src/api/router.ts
-  4 → src/db/schema.ts
-  5 → src/components/App.tsx
+  1 → README.md  2 → src/index.ts  3 → src/api/router.ts
 
   ✓ Report saved to ONBOARDING.md
 ```
 
----
+## Install
 
-## The Problem
-
-You join a new project. There are 500 files. Nobody wrote docs. The last dev left. Where do you even start?
-
-You could spend a day clicking through files. Or you could run one command and get a ranked, structured map of the entire codebase in under a minute.
-
----
-
-## Install & Run
+No npm account needed — runs straight from GitHub:
 
 ```bash
-# No install needed
-npx repo-map .
+npx github:NickCirv/repo-map .
+```
 
-# Or install globally
-npm install -g repo-map
+Or install globally:
+
+```bash
+npm install -g github:NickCirv/repo-map
 repo-map .
 ```
 
----
+## Usage
 
-## Commands
+```bash
+# Map current directory, print to terminal
+npx github:NickCirv/repo-map .
 
-| Command | What it does |
-|---------|-------------|
-| `repo-map .` | Map current directory, print to terminal |
-| `repo-map /path/to/repo` | Map any repo |
-| `repo-map . --depth 3` | Limit directory tree depth (default: 4) |
-| `repo-map . --format md` | Output as markdown |
-| `repo-map . --output ONBOARDING.md` | Save to specific file |
-| `repo-map . --json` | Output raw JSON (pipe to other tools) |
+# Map any repo
+npx github:NickCirv/repo-map /path/to/repo
 
----
+# Limit directory tree depth (default: 4)
+npx github:NickCirv/repo-map . --depth 3
 
-## What It Analyzes
+# Save as a markdown onboarding doc
+npx github:NickCirv/repo-map . --output ONBOARDING.md
+
+# Output raw JSON (pipe to other tools)
+npx github:NickCirv/repo-map . --json
+```
+
+| Flag | Description |
+|------|-------------|
+| `[path]` | Repo to map (default: `.`) |
+| `-d, --depth <N>` | Directory tree depth limit (default: 4) |
+| `-f, --format <type>` | Output format: `terminal` or `md` (default: `terminal`) |
+| `-o, --output <file>` | Save report to file (implies `--format md`) |
+| `--json` | Output raw JSON |
+
+## What it analyzes
 
 ### Quick Stats
-Total files, total LOC, languages detected, last commit date, contributor count.
+Total files, total lines of code, languages detected, last commit date, contributor count, dependency counts.
 
-### Architecture Overview
-Entry points, config files, test directories, CI/build files, directory tree.
+### Key Files (top 10)
+Ranked by composite score: LOC weight + import depth + function count. These are the files a new developer should read first to understand the system.
 
-### Key Files (Top 10)
-Ranked by composite score: LOC weight + import depth + function count. These are the files a new dev should read first.
-
-### Change Hotspots (Top 10)
-Most frequently modified files in the last 100 commits. High-churn files are flagged automatically.
+### Change Hotspots (top 10)
+Most frequently modified files in the last 100 commits. High-churn files are flagged automatically — they're where bugs land and where reviews should focus.
 
 ### Dependency Map
 Direct and dev dependencies with version ranges. Flags packages with old major versions.
 
 ### Complexity Warnings
-Files over 500 lines, deeply nested directories (>5 levels), circular import hints.
+Files over 500 lines, deeply nested directories (more than 5 levels), circular import hints.
 
 ### Start Here Path
-An ordered reading list — the 5-7 files that unlock the entire codebase.
+An ordered reading list — the 5–7 files that unlock the entire codebase for a new joiner.
 
----
+## Works with any language
 
-## Why Not CodeSee / GitHub Copilot?
+Any git repo with source files:
 
-| | repo-map | CodeSee | GitHub Copilot |
-|--|---------|---------|----------------|
-| Free | Yes | No | No |
-| Works offline | Yes | No | No |
-| No account required | Yes | No | No |
-| No API keys | Yes | No | No |
-| CI/CD friendly | Yes | Partial | No |
-| Instant results | Yes | Minutes | N/A |
-
-repo-map is pure static analysis + git log parsing. No AI, no network requests, no telemetry.
-
----
-
-## Works With
-
-Any language in any git repo:
-
-| Ecosystem | Package file detected |
-|-----------|-----------------------|
+| Ecosystem | Detected via |
+|-----------|-------------|
 | Node.js / Bun | `package.json` |
 | Python | `requirements.txt`, `pyproject.toml` |
 | Rust | `Cargo.toml` |
 | Go | `go.mod` |
 | Ruby | `Gemfile` |
-| Java / Kotlin | detected by file extensions |
 | PHP | `composer.json` |
-| And more | any git repo with source files |
+| Java / Kotlin | file extensions |
+
+## What it is NOT
+
+- **Not an AI tool.** Pure static analysis and `git log` parsing — deterministic, reproducible, works fully offline.
+- **Not a secrets scanner or linter.** It maps structure and churn; it doesn't audit code quality or security.
+- **Not a replacement for docs.** It generates a starting point. The output is meant to be edited, committed, and kept up to date as the team evolves it.
 
 ---
 
-## Requirements
-
-- Node.js 18+
-- git (for hotspot analysis — optional, degrades gracefully without it)
-
----
-
-## License
-
-MIT — Nicholas Ashkar, 2026
+<div align="center">
+<sub>Node 18+ · MIT · by <a href="https://github.com/NickCirv">NickCirv</a></sub>
+</div>

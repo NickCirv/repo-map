@@ -8,7 +8,8 @@
   },
   "main": "./src/index.js",
   "scripts": {
-    "start": "node bin/map.js"
+    "start": "node bin/map.js",
+    "test": "node --test"
   },
   "keywords": [
     "codebase",
@@ -26,6 +27,6 @@
     "commander": "^12.1.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20"
   }
 }

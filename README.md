@@ -1,132 +1,87 @@
-![repo-map — understand any codebase in 5 minutes with static analysis and git hotspot detection](assets/banner.png)
+![repo-map — Nicholas Ashkar editorial artwork](assets/nicholas-ashkar/banner.png)
 
-<div align="center">
+# repo-map
 
-**Drop into any git repo and get a ranked, structured map of the entire codebase in under a minute.**
+Produce an initial navigation report for a local codebase.
 
-![license](https://img.shields.io/badge/license-MIT-blue?labelColor=0B0A09)
-![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen?labelColor=0B0A09)
-![no API keys](https://img.shields.io/badge/API%20keys-none%20required-8B92F6?labelColor=0B0A09)
-![works offline](https://img.shields.io/badge/works-offline-8B92F6?labelColor=0B0A09)
+Combines directory structure, manifest dependencies, recent Git change hotspots and text-based complexity hints into terminal, JSON or Markdown output.
 
-</div>
 
----
 
-You join a new project. There are 500 files. Nobody wrote docs. Where do you even start?
 
-`repo-map` runs pure static analysis + git log parsing — no network, no account, no AI service — and produces a ranked guide: the key files to read first, the hottest change zones, the complexity warnings, and a straight-line start-here path.
+<a id="install"></a>
 
-```
-  REPO-MAP  v1.0.0
+<a id="quick-stats"></a>
 
-  ── Quick Stats ──────────────────────────────────────
-  Files: 147  │  LOC: 12,847  │  Languages: TypeScript, CSS, JSON
-  Contributors: 5  │  Last commit: 2 hours ago
-  Dependencies: 12 direct, 24 dev  (npm)
+<a id="start-here-path"></a>
 
-  ── Key Files (read these first) ─────────────────────
-  1. src/index.ts            Entry point  245 LOC │ 8 imports
-  2. src/api/router.ts                    189 LOC │ 12 imports
-  3. src/db/schema.ts                     312 LOC │ 5 imports
+## Quickstart
 
-  ── Hotspots (most volatile) ─────────────────────────
-  ⚡ src/api/router.ts         38 changes
-  ⚡ src/components/Form.tsx   29 changes
-
-  ── Complexity Warnings ──────────────────────────────
-  ⚠  src/legacy/parser.js     847 lines (consider splitting)
-
-  ── Start Here Path ──────────────────────────────────
-  1 → README.md  2 → src/index.ts  3 → src/api/router.ts
-
-  ✓ Report saved to ONBOARDING.md
-```
-
-## Install
-
-No npm account needed — runs straight from GitHub:
+Package runtime requirement: Node.js `>=20`. Git is needed to obtain this pinned source checkout.
 
 ```bash
-npx github:NickCirv/repo-map .
+git clone https://github.com/NickCirv/repo-map.git
+cd repo-map
+git checkout 2da896208a236526aeb4508ed5a3d3ae83c9258a
+npm install --ignore-scripts
+node bin/map.js . --json
 ```
 
-Or install globally:
+This source-derived example has not been executed in this review. The report describes this checkout. Git-derived sections depend on the history available locally.
 
-```bash
-npm install -g github:NickCirv/repo-map
-repo-map .
-```
+
+
+
+
+
+
+<a id="what-it-analyzes"></a>
+
+<a id="key-files-top-10"></a>
+
+<a id="change-hotspots-top-10"></a>
+
+<a id="dependency-map"></a>
+
+<a id="complexity-warnings"></a>
+
+<a id="works-with-any-language"></a>
 
 ## Usage
 
 ```bash
-# Map current directory, print to terminal
-npx github:NickCirv/repo-map .
-
-# Map any repo
-npx github:NickCirv/repo-map /path/to/repo
-
-# Limit directory tree depth (default: 4)
-npx github:NickCirv/repo-map . --depth 3
-
-# Save as a markdown onboarding doc
-npx github:NickCirv/repo-map . --output ONBOARDING.md
-
-# Output raw JSON (pipe to other tools)
-npx github:NickCirv/repo-map . --json
+node bin/map.js /path/to/project --depth 3
+node bin/map.js /path/to/project --output ONBOARDING.md
 ```
 
-| Flag | Description |
-|------|-------------|
-| `[path]` | Repo to map (default: `.`) |
-| `-d, --depth <N>` | Directory tree depth limit (default: 4) |
-| `-f, --format <type>` | Output format: `terminal` or `md` (default: `terminal`) |
-| `-o, --output <file>` | Save report to file (implies `--format md`) |
-| `--json` | Output raw JSON |
+`--depth` limits the displayed tree. `--format md` writes a Markdown report, defaulting to ONBOARDING.md; `--output` chooses a path.
 
-## What it analyzes
+[Command reference](docs/REFERENCE.md) covers arguments, modes and output controls.
 
-### Quick Stats
-Total files, total lines of code, languages detected, last commit date, contributor count, dependency counts.
 
-### Key Files (top 10)
-Ranked by composite score: LOC weight + import depth + function count. These are the files a new developer should read first to understand the system.
+<a id="what-it-is-not"></a>
 
-### Change Hotspots (top 10)
-Most frequently modified files in the last 100 commits. High-churn files are flagged automatically — they're where bugs land and where reviews should focus.
+## Behavior and limits
 
-### Dependency Map
-Direct and dev dependencies with version ranges. Flags packages with old major versions.
+This is an onboarding starting point, not a semantic architecture graph. Import/function counts and circular hints use text analysis. Dependency age flags are heuristics, not live registry checks. Git hotspot summaries are bounded by the selected history window and may be incomplete in shallow clones. Markdown generation writes a file and can replace an existing report.
 
-### Complexity Warnings
-Files over 500 lines, deeply nested directories (more than 5 levels), circular import hints.
+## Development
 
-### Start Here Path
-An ordered reading list — the 5–7 files that unlock the entire codebase for a new joiner.
+Declared package scripts:
 
-## Works with any language
+| Script | Command |
+| --- | --- |
+| `start` | `node bin/map.js` |
+| `test` | `node --test` |
 
-Any git repo with source files:
+The smoke test syntax-checks the entrypoint; it does not exercise CLI behavior or integrations.
 
-| Ecosystem | Detected via |
-|-----------|-------------|
-| Node.js / Bun | `package.json` |
-| Python | `requirements.txt`, `pyproject.toml` |
-| Rust | `Cargo.toml` |
-| Go | `go.mod` |
-| Ruby | `Gemfile` |
-| PHP | `composer.json` |
-| Java / Kotlin | file extensions |
+## Research
 
-## What it is NOT
+[Source review and claim ledger](docs/RESEARCH.md) records revision `2da896208a23`, inspected files and verification gaps.
 
-- **Not an AI tool.** Pure static analysis and `git log` parsing — deterministic, reproducible, works fully offline.
-- **Not a secrets scanner or linter.** It maps structure and churn; it doesn't audit code quality or security.
-- **Not a replacement for docs.** It generates a starting point. The output is meant to be edited, committed, and kept up to date as the team evolves it.
+## License and attribution
 
----
+Protected license and attribution files remain unchanged: [LICENSE](https://github.com/NickCirv/repo-map/blob/2da896208a236526aeb4508ed5a3d3ae83c9258a/LICENSE).
 
-<div align="center">
-<sub>Node 18+ · MIT · by <a href="https://github.com/NickCirv">NickCirv</a></sub>
-</div>
+[Artwork credits](assets/nicholas-ashkar/CREDITS.md) · [Nicholas Ashkar — consulting](https://nicholashkar.com/#oxblood-contact)
